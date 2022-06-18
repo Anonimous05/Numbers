@@ -1,0 +1,32 @@
+.table_main_container {
+    padding: 10px;
+    width: 50%;
+}
+.table_container {
+    width: 90%;
+}
+.titles {
+    display: flex;
+}
+.titles > div {
+    text-align: center;
+    flex-basis: 25%;
+    background: #666666;
+    border: 0.5px solid #3b3b3b;
+    padding: 5px;
+    color: #fff;
+    font-weight: bold;
+}
+.table_rows {
+
+}
+.table_row {
+    display: flex;
+}
+.table_row > div {
+    flex-basis: 25%;
+    border: 0.5px solid #3b3b3b;
+    padding: 3px;
+    text-align: end;
+    background: #e6f1fa;
+}

@@ -1,0 +1,85 @@
+version: "3.8"
+
+services:
+
+  postgres_db:
+    image: "postgres:${POSTGRES_VERSION}"
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: "${DATABASE_NAME}"
+      POSTGRES_USER: "${DATABASE_USER}"
+      POSTGRES_PASSWORD: "${DATABASE_USER_PASSWORD}"
+    volumes:
+      - "postgres_data:/var/lib/postgresql/data"
+    ports:
+      - "${POSTGRES_PUBLISH_PORT}:${POSTGRES_PRIVATE_PORT}"
+
+  redis:
+    image: "redis:${REDIS_VERSION}"
+    restart: always
+    depends_on:
+      - postgres_db
+    env_file:
+      - .env
+    ports:
+      - "${REDIS_PUBLISH_PORT}:${REDIS_PRIVATE_PORT}"
+
+  backend:
+    build:
+      context: ./backend
+    restart: always
+    volumes:
+      - "./backend:/app"
+    env_file:
+      - .env
+    ports:
+      - "${BACKEND_PUBLISH_PORT}:${BACKEND_PRIVATE_PORT}"
+    tty: true
+    depends_on:
+      - postgres_db
+      - redis
+    command: sh -c "./manage.py migrate && ./manage.py runserver 0.0.0.0:${BACKEND_PRIVATE_PORT}"
+
+  worker:
+    build:
+      context: ./backend
+    restart: always
+    volumes:
+      - "./backend:/app"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    command: sh -c "celery -A core worker -l info"
+
+  celery_beat:
+    build:
+      context: ./backend
+    restart: always
+    volumes:
+      - "./backend:/app"
+    env_file:
+      - .env
+    depends_on:
+      - worker
+      - redis
+    command: sh -c "celery -A core beat -l info"
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: always
+    volumes:
+      - "./frontend:/app"
+    env_file:
+      - .env
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PUBLISH_PORT}:${FRONTEND_PRIVATE_PORT}"
+    command: sh -c "PORT=${FRONTEND_PRIVATE_PORT} yarn start"
+
+volumes:
+  postgres_data:
