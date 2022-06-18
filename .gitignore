@@ -1,4 +1,6 @@
 .idea
+.env
+
 backend/venv
 backend/celerybeat-shedule
 backend/celerybeat-shedule.db
