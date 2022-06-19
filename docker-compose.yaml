@@ -68,11 +68,8 @@ services:
     command: sh -c "celery -A core beat -l info"
 
   frontend:
-    build:
-      context: ./frontend
+    build: frontend
     restart: always
-    volumes:
-      - "./frontend:/app"
     env_file:
       - .env
     depends_on:

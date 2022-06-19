@@ -2,10 +2,10 @@ FROM node:16.10.0
 
 WORKDIR /app
 
-COPY package.json .
+COPY package.json /app
 
-RUN yarn
+RUN yarn && yarn add react-scripts
 
-COPY . .
+COPY . /app
 
 CMD ["yarn", "start"]

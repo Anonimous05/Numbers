@@ -8,5 +8,5 @@ backend/orders/google_sheets_configs/token.json
 
 frontend/node_modules
 frontend/yarn.lock
-frontend/package-lock.lock
+frontend/package-lock.json
 frontend/build
